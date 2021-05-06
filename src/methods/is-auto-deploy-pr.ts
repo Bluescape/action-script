@@ -2,7 +2,7 @@ import { context } from "@actions/github";
 import { parsedContext } from "../utils/parse-context";
 import { DEPLOY_LABEL_TEXT } from "./constants";
 
-export async function isAutoDeployPR({ github }:any): Promise<boolean> {
+export async function isAutoDeployPR({ github }: any): Promise<boolean> {
   const { owner, repo, sha, ref, branch } = parsedContext(context);
   const result = await github.repos.listPullRequestsAssociatedWithCommit({
     owner,
@@ -15,12 +15,12 @@ export async function isAutoDeployPR({ github }:any): Promise<boolean> {
   }
   const { data: pulls } = result;
 
-  return pulls.some((pull:any) => {
+  return pulls.some((pull: any) => {
     const {
       labels,
       head: { ref: pullRef },
     } = pull;
-    const labelMatch = labels.some((label:any) => {
+    const labelMatch = labels.some((label: any) => {
       const { name } = label;
       return name.toLowerCase().includes(DEPLOY_LABEL_TEXT);
     });

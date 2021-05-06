@@ -1,4 +1,4 @@
-export function parsedContext(context:any): any {
+export function parsedContext(context: any): any {
   const {
     payload: {
       repository: { name: repo, organization },
