@@ -26,7 +26,9 @@ async function main(): Promise<void> {
   const methodNames: any = Object.keys(methods);
   console.log("methodName:", methodName);
   if (!methodNames.includes(methodName)) {
-    throw new Error("Method not found");
+    throw new Error(
+      `Method not found. Available methods: ${methodNames.join(",")}`
+    );
   }
 
   const { ...method }: any = methods;
