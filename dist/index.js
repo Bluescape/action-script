@@ -4868,11 +4868,11 @@ var lib_default = /*#__PURE__*/__webpack_require__.n(lib);
 async function sendSlackNotification({ github }) {
     try {
         // Inputs and validation
-        const slackReleaseChannelUrl = Object(core.getInput)("webhook_url", {
+        const slackChannelUrl = Object(core.getInput)("webhook_url", {
             required: true,
         });
         const message = Object(core.getInput)("message", { required: true });
-        const res = await lib_default()(slackReleaseChannelUrl, {
+        const res = await lib_default()(slackChannelUrl, {
             method: "POST",
             body: JSON.stringify({ text: message }),
         });

@@ -4,12 +4,12 @@ import fetch from "node-fetch";
 export async function sendSlackNotification({ github }: any): Promise<string> {
   try {
     // Inputs and validation
-    const slackReleaseChannelUrl = core.getInput("webhook_url", {
+    const slackChannelUrl = core.getInput("webhook_url", {
       required: true,
     });
     const message = core.getInput("message", { required: true });
 
-    const res = await fetch(slackReleaseChannelUrl, {
+    const res = await fetch(slackChannelUrl, {
       method: "POST",
       body: JSON.stringify({ text: message }),
     });
