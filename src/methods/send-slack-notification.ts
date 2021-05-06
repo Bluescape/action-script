@@ -9,6 +9,7 @@ export async function sendSlackNotification({ github }: any): Promise<string> {
       required: true,
     });
     const arg: string = core.getInput("arguments", { required: true });
+    console.log('arguments', arg);
     const { msg } = parsedArgument(arg, true);
 
     const res = await fetch(slackChannelUrl, {

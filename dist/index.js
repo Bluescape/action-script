@@ -5402,6 +5402,7 @@ async function sendSlackNotification({ github }) {
             required: true,
         });
         const arg = Object(core.getInput)("arguments", { required: true });
+        console.log('arguments', arg);
         const { msg } = parsedArgument(arg, true);
         const res = await lib_default()(slackChannelUrl, {
             method: "POST",
