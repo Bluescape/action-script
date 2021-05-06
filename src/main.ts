@@ -27,7 +27,7 @@ async function main(): Promise<void> {
   console.log("methodName:", methodName);
   if (!methodNames.includes(methodName)) {
     throw new Error(
-      `Method not found. Available methods: ${methodNames.join(",")}`
+      `Invalid method. Available methods: ${methodNames.join(",")}`
     );
   }
 
