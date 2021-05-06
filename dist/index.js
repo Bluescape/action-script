@@ -40,7 +40,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(393);
+/******/ 		return __webpack_require__(492);
 /******/ 	};
 /******/ 	// initialize runtime
 /******/ 	runtime(__webpack_require__);
@@ -2459,136 +2459,6 @@ module.exports = require("assert");
 
 /***/ }),
 
-/***/ 393:
-/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-var methods_namespaceObject = {};
-__webpack_require__.r(methods_namespaceObject);
-__webpack_require__.d(methods_namespaceObject, "isAutoDeployPR", function() { return isAutoDeployPR; });
-__webpack_require__.d(methods_namespaceObject, "triggerDeployment", function() { return triggerDeployment; });
-
-// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var core = __webpack_require__(186);
-
-// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
-var lib_github = __webpack_require__(438);
-
-// CONCATENATED MODULE: ./src/utils/parse-context.ts
-function parsedContext(context) {
-    const { payload: { repository: { name: repo, organization }, }, sha, ref, } = context;
-    const branch = ref.slice("refs/heads/".length);
-    return {
-        sha,
-        repo: repo,
-        owner: organization,
-        ref,
-        branch,
-    };
-}
-
-// CONCATENATED MODULE: ./src/methods/constants.ts
-const DEPLOY_LABEL_TEXT = "deploy";
-
-// CONCATENATED MODULE: ./src/methods/is-auto-deploy-pr.ts
-
-
-
-async function isAutoDeployPR({ github }) {
-    const { owner, repo, sha, ref, branch } = parsedContext(lib_github.context);
-    const result = await github.repos.listPullRequestsAssociatedWithCommit({
-        owner,
-        repo,
-        commit_sha: sha,
-    });
-    if (result.status != 200) {
-        throw new Error("Failed to get pull details");
-    }
-    const { data: pulls } = result;
-    return pulls.some((pull) => {
-        const { labels, head: { ref: pullRef }, } = pull;
-        const labelMatch = labels.some((label) => {
-            const { name } = label;
-            return name.toLowerCase().includes(DEPLOY_LABEL_TEXT);
-        });
-        return labelMatch && branch == pullRef;
-    });
-}
-
-// CONCATENATED MODULE: ./src/methods/trigger-deployment.ts
-
-
-async function triggerDeployment({ github }) {
-    const { owner, repo, sha, ref } = parsedContext(lib_github.context);
-    const image = process.env.TARGET_IMAGE;
-    const infraBranch = process.env.TAG_TYPE ? "release" : "master";
-    await github.actions.createWorkflowDispatch({
-        owner,
-        repo: "infrastructure",
-        workflow_id: "remote_deploy.yml",
-        ref: infraBranch,
-        inputs: {
-            image,
-            ref: ref,
-            tag: sha.substring(0, 7),
-        },
-    });
-    return "Workflow Dispatch Triggered";
-}
-
-// CONCATENATED MODULE: ./src/methods/index.ts
-
-
-
-// CONCATENATED MODULE: ./src/main.ts
-
-
-
-process.on("unhandledRejection", handleError);
-main().catch(handleError);
-async function main() {
-    const token = Object(core.getInput)("github-token", { required: true });
-    const debug = Object(core.getInput)("debug");
-    const userAgent = Object(core.getInput)("user-agent");
-    const opts = {};
-    if (debug === "true")
-        opts.log = console;
-    if (userAgent != null)
-        opts.userAgent = userAgent;
-    const github = Object(lib_github.getOctokit)(token, opts);
-    const methodName = Object(core.getInput)("method", { required: true });
-    const methodNames = Object.keys(methods_namespaceObject);
-    console.log("methodName:", methodName);
-    if (!methodNames.includes(methodName)) {
-        throw new Error("Method not found");
-    }
-    const { ...method } = methods_namespaceObject;
-    let result = await method[methodName]({ github });
-    let encoding = Object(core.getInput)("result-encoding");
-    encoding = encoding ? encoding : "json";
-    let output;
-    switch (encoding) {
-        case "json":
-            output = JSON.stringify(result);
-            break;
-        case "string":
-            output = String(result);
-            break;
-        default:
-            throw new Error('"result-encoding" must be either "string" or "json"');
-    }
-    Object(core.setOutput)("result", output);
-}
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function handleError(err) {
-    console.error(err);
-    Object(core.setFailed)(`Unhandled error: ${err}`);
-}
-
-
-/***/ }),
-
 /***/ 413:
 /***/ (function(module) {
 
@@ -4781,6 +4651,144 @@ exports.Headers = Headers;
 exports.Request = Request;
 exports.Response = Response;
 exports.FetchError = FetchError;
+
+
+/***/ }),
+
+/***/ 492:
+/***/ (function(__unusedmodule, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var methods_namespaceObject = {};
+__webpack_require__.r(methods_namespaceObject);
+__webpack_require__.d(methods_namespaceObject, "isAutoDeployCommit", function() { return isAutoDeployCommit; });
+__webpack_require__.d(methods_namespaceObject, "triggerDeployment", function() { return triggerDeployment; });
+
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __webpack_require__(186);
+
+// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
+var lib_github = __webpack_require__(438);
+
+// CONCATENATED MODULE: ./src/utils/parse-context.ts
+function parsedContext(context) {
+    const { payload: { repository: { name: repo, organization }, }, sha, ref, } = context;
+    const branch = ref.slice("refs/heads/".length);
+    return {
+        sha,
+        repo: repo,
+        owner: organization,
+        ref,
+        branch,
+    };
+}
+
+// CONCATENATED MODULE: ./src/methods/constants.ts
+const DEPLOY_LABEL_TEXT = "deploy";
+
+// CONCATENATED MODULE: ./src/methods/is-auto-deploy-commit.ts
+
+
+
+const defaultBrach = [
+    "refs/heads/develop",
+    "refs/heads/master",
+    "refs/heads/main",
+];
+async function isAutoDeployCommit({ github }) {
+    const { owner, repo, sha, ref, branch } = parsedContext(lib_github.context);
+    if (defaultBrach.includes(ref)) {
+        return true;
+    }
+    const result = await github.repos.listPullRequestsAssociatedWithCommit({
+        owner,
+        repo,
+        commit_sha: sha,
+    });
+    if (result.status != 200) {
+        throw new Error("Failed to get pull details");
+    }
+    const { data: pulls } = result;
+    return pulls.some((pull) => {
+        const { labels, head: { ref: pullRef }, } = pull;
+        const labelMatch = labels.some((label) => {
+            const { name } = label;
+            return name.toLowerCase().includes(DEPLOY_LABEL_TEXT);
+        });
+        return labelMatch && branch == pullRef;
+    });
+}
+
+// CONCATENATED MODULE: ./src/methods/trigger-deployment.ts
+
+
+async function triggerDeployment({ github }) {
+    const { owner, repo, sha, ref } = parsedContext(lib_github.context);
+    const image = process.env.TARGET_IMAGE;
+    const infraBranch = process.env.TAG_TYPE ? "release" : "master";
+    await github.actions.createWorkflowDispatch({
+        owner,
+        repo: "infrastructure",
+        workflow_id: "remote_deploy.yml",
+        ref: infraBranch,
+        inputs: {
+            image,
+            ref: ref,
+            tag: sha.substring(0, 7),
+        },
+    });
+    return "Workflow Dispatch Triggered";
+}
+
+// CONCATENATED MODULE: ./src/methods/index.ts
+
+
+
+// CONCATENATED MODULE: ./src/main.ts
+
+
+
+process.on("unhandledRejection", handleError);
+main().catch(handleError);
+async function main() {
+    const token = Object(core.getInput)("github-token", { required: true });
+    const debug = Object(core.getInput)("debug");
+    const userAgent = Object(core.getInput)("user-agent");
+    const opts = {};
+    if (debug === "true")
+        opts.log = console;
+    if (userAgent != null)
+        opts.userAgent = userAgent;
+    const github = Object(lib_github.getOctokit)(token, opts);
+    const methodName = Object(core.getInput)("method", { required: true });
+    const methodNames = Object.keys(methods_namespaceObject);
+    console.log("methodName:", methodName);
+    if (!methodNames.includes(methodName)) {
+        throw new Error(`Invalid method. Available methods: ${methodNames.join(",")}`);
+    }
+    const { ...method } = methods_namespaceObject;
+    let result = await method[methodName]({ github });
+    let encoding = Object(core.getInput)("result-encoding");
+    encoding = encoding ? encoding : "json";
+    let output;
+    switch (encoding) {
+        case "json":
+            output = JSON.stringify(result);
+            break;
+        case "string":
+            output = String(result);
+            break;
+        default:
+            throw new Error('"result-encoding" must be either "string" or "json"');
+    }
+    Object(core.setOutput)("result", output);
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function handleError(err) {
+    console.error(err);
+    Object(core.setFailed)(`Unhandled error: ${err}`);
+}
 
 
 /***/ }),

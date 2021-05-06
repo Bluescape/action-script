@@ -18,7 +18,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "git add dist/"
+      "pre-commit": "npm run build && git add dist/"
     }
   },
   "jest": {
