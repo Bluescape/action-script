@@ -4726,7 +4726,7 @@ async function isAutoDeployCommit({ github }) {
 async function triggerDeployment({ github }) {
     const { owner, repo, sha, ref } = parsedContext(lib_github.context);
     const image = process.env.TARGET_IMAGE;
-    const infraBranch = process.env.TAG_TYPE ? "release" : "master";
+    const infraBranch = process.env.TAG ? "release" : "master";
     await github.actions.createWorkflowDispatch({
         owner,
         repo: "infrastructure",
