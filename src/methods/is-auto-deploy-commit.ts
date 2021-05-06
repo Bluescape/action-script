@@ -2,8 +2,17 @@ import { context } from "@actions/github";
 import { parsedContext } from "../utils/parse-context";
 import { DEPLOY_LABEL_TEXT } from "./constants";
 
-export async function isAutoDeployPR({ github }: any): Promise<boolean> {
+const defaultBrach = [
+  "refs/heads/develop",
+  "refs/heads/master",
+  "refs/heads/main",
+];
+export async function isAutoDeployCommit({ github }: any): Promise<boolean> {
   const { owner, repo, sha, ref, branch } = parsedContext(context);
+  if (defaultBrach.includes(ref)) {
+    return true;
+  }
+
   const result = await github.repos.listPullRequestsAssociatedWithCommit({
     owner,
     repo,
