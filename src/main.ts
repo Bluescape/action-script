@@ -23,10 +23,9 @@ async function main(): Promise<void> {
 
   const github = getOctokit(token, opts);
   const methodName: any = core.getInput("method", { required: true });
-
   const methodNames: any = Object.keys(methods);
-
-  if (!methodNames.includes[methodName]) {
+  console.log("methodName:", methodName);
+  if (!methodNames.includes(methodName)) {
     throw new Error("Method not found");
   }
 

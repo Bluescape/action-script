@@ -2489,7 +2489,7 @@ function parsedContext(context) {
 }
 
 // CONCATENATED MODULE: ./src/methods/constants.ts
-const DEPLOY_LABEL_TEXT = 'deploy';
+const DEPLOY_LABEL_TEXT = "deploy";
 
 // CONCATENATED MODULE: ./src/methods/is-auto-deploy-pr.ts
 
@@ -2559,7 +2559,8 @@ async function main() {
     const github = Object(lib_github.getOctokit)(token, opts);
     const methodName = Object(core.getInput)("method", { required: true });
     const methodNames = Object.keys(methods_namespaceObject);
-    if (!methodNames.includes[methodName]) {
+    console.log("methodName:", methodName);
+    if (!methodNames.includes(methodName)) {
         throw new Error("Method not found");
     }
     const { ...method } = methods_namespaceObject;
