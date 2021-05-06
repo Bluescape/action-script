@@ -1,5 +1,6 @@
 import * as core from "@actions/core";
 import fetch from "node-fetch";
+import { parsedArgument } from "../utils/parse-argument";
 
 export async function sendSlackNotification({ github }: any): Promise<string> {
   try {
@@ -7,11 +8,12 @@ export async function sendSlackNotification({ github }: any): Promise<string> {
     const slackChannelUrl = core.getInput("webhook_url", {
       required: true,
     });
-    const message = core.getInput("message", { required: true });
+    const arg: string = core.getInput("arguments", { required: true });
+    const { msg } = parsedArgument(arg, true);
 
     const res = await fetch(slackChannelUrl, {
       method: "POST",
-      body: JSON.stringify({ text: message }),
+      body: JSON.stringify({ text: msg }),
     });
 
     if (res.status === 200) {
