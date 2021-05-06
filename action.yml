@@ -1,0 +1,38 @@
+name:  Action Script
+author: Bluescape
+description: Run simple scriptst
+branding:
+  color: blue
+  icon: code
+inputs:
+  method:
+    description: The function to run
+    required: true
+  arguments:
+    description: pass arguments arry of object as string
+    required: false 
+  github-token:
+    description: The GitHub token used to create an authenticated client
+    default: ${{ github.token }}
+    required: true
+  docker-username:
+    description: docker username
+    required: false
+  docker-password:
+    description: docker password
+    required: false
+  slack-channel-url:
+    description: slack channel url
+    required: false
+  user-agent:
+    description: An optional user-agent string
+    default: actions/github-script
+  result-encoding:
+    description: Either "string" or "json" (default "json")—how the result will be encoded
+    default: json
+outputs:
+  result:
+    description: The return value of the script, stringified with `JSON.stringify`
+runs:
+  using: node12
+  main: dist/index.js
