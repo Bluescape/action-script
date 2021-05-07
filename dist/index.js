@@ -5306,6 +5306,7 @@ var lib_github = __webpack_require__(438);
 
 // CONCATENATED MODULE: ./src/utils/parse-context.ts
 function parsedContext(context) {
+    console.log(context);
     const { payload: { repository: { name: repo, organization }, }, sha, ref, } = context;
     const branch = ref.slice("refs/heads/".length);
     return {

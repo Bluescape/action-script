@@ -1,4 +1,5 @@
 export function parsedContext(context: any): any {
+  console.log(context);
   const {
     payload: {
       repository: { name: repo, organization },
@@ -6,6 +7,7 @@ export function parsedContext(context: any): any {
     sha,
     ref,
   } = context;
+  
   const branch = ref.slice("refs/heads/".length);
   return {
     sha,
