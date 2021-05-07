@@ -5307,11 +5307,14 @@ var lib_github = __webpack_require__(438);
 // CONCATENATED MODULE: ./src/utils/parse-context.ts
 function parsedContext(context) {
     console.log(context);
-    const { payload: { repository: { name: repo1, organization }, }, sha, ref, } = context;
+    const { payload: { repository: { name: repo1, organization }, }, sha, ref, eventName, } = context;
     const owner = process.env.GITHUB_REPOSITORY_OWNER || "";
     const repository = process.env.GITHUB_REPOSITORY || "";
     const repo = repository.slice(owner.length + 1);
-    const branch = ref.slice("refs/heads/".length);
+    let branch = ref.slice("refs/heads/".length);
+    if (eventName == "pull_request") {
+        branch = process.env.GITHUB_HEAD_REF;
+    }
     return {
         sha,
         repo,

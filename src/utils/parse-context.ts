@@ -6,11 +6,16 @@ export function parsedContext(context: any): any {
     },
     sha,
     ref,
+    eventName,
   } = context;
   const owner = process.env.GITHUB_REPOSITORY_OWNER || "";
   const repository = process.env.GITHUB_REPOSITORY || "";
   const repo = repository.slice(owner.length + 1);
-  const branch = ref.slice("refs/heads/".length);
+  let branch = ref.slice("refs/heads/".length);
+  if (eventName == "pull_request") {
+    branch = process.env.GITHUB_HEAD_REF;
+  }
+
   return {
     sha,
     repo,
