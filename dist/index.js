@@ -5352,12 +5352,14 @@ async function isAutoDeployCommit({ github }) {
         throw new Error("Failed to get pull details");
     }
     const { data: pulls } = result;
+    console.log(pulls);
     return pulls.some((pull) => {
         const { labels, head: { ref: pullRef }, } = pull;
         const labelMatch = labels.some((label) => {
             const { name } = label;
             return name.toLowerCase().includes(DEPLOY_LABEL_TEXT);
         });
+        console.log(labelMatch, branch, pullRef);
         return labelMatch && branch == pullRef;
     });
 }
