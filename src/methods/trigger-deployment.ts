@@ -5,7 +5,7 @@ export async function triggerDeployment({ github }: any): Promise<string> {
   const { owner, repo, sha, ref } = parsedContext(context);
   const image = process.env.TARGET_IMAGE;
   console.log(process.env);
-  const infraBranch = process.env.RC_BUILD ? "release" : "m2";
+  const infraBranch = process.env.RC_BUILD ? "release" : "master";
   await github.actions.createWorkflowDispatch({
     owner,
     repo: "infrastructure",
