@@ -4,7 +4,8 @@ import { parsedContext } from "../utils/parse-context";
 export async function triggerDeployment({ github }: any): Promise<string> {
   const { owner, repo, sha, ref } = parsedContext(context);
   const image = process.env.TARGET_IMAGE;
-  const infraBranch = process.env.TAG ? "release" : "master";
+  console.log(process.env);
+  const infraBranch = process.env.TAG ? "release" : "m2";
   await github.actions.createWorkflowDispatch({
     owner,
     repo: "infrastructure",
@@ -18,3 +19,4 @@ export async function triggerDeployment({ github }: any): Promise<string> {
   });
   return "Workflow Dispatch Triggered";
 }
+
