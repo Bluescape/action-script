@@ -8,11 +8,13 @@ const defaultBrach = [
   "refs/heads/main",
 ];
 export async function isAutoDeployCommit({ github }: any): Promise<boolean> {
+  console.log(process.env)
   const { owner, repo, sha, ref, branch } = parsedContext(context);
+
   if (defaultBrach.includes(ref)) {
     return true;
   }
-
+  console.log(owner, repo, sha, ref, branch)
   const result = await github.repos.listPullRequestsAssociatedWithCommit({
     owner,
     repo,

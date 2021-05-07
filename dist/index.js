@@ -5334,10 +5334,12 @@ const defaultBrach = [
     "refs/heads/main",
 ];
 async function isAutoDeployCommit({ github }) {
+    console.log(process.env);
     const { owner, repo, sha, ref, branch } = parsedContext(lib_github.context);
     if (defaultBrach.includes(ref)) {
         return true;
     }
+    console.log(owner, repo, sha, ref, branch);
     const result = await github.repos.listPullRequestsAssociatedWithCommit({
         owner,
         repo,
