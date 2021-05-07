@@ -9,8 +9,7 @@ export function parsedContext(context: any): any {
   } = context;
   const owner = process.env.GITHUB_REPOSITORY_OWNER || "";
   const repository = process.env.GITHUB_REPOSITORY || "";
-  const repo = repository.slice("refs/heads/".length + 1);
-
+  const repo = repository.slice(owner.length + 1);
   const branch = ref.slice("refs/heads/".length);
   return {
     sha,
